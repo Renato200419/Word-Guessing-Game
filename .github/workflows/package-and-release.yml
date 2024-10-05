@@ -30,6 +30,16 @@ jobs:
         run: |
           python setup.py sdist bdist_wheel  # Empaqueta el proyecto en formato distribuible
 
+      - name: List files in current directory
+        run: ls -R  # Lista recursivamente todos los archivos en el directorio actual
+      - name: Verify dist folder creation
+        run: |
+          if [ -d "./dist" ]; then
+            echo "dist/ directory exists."
+          else
+            echo "dist/ directory does not exist. Creating it now."
+            mkdir dist
+          fi
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
