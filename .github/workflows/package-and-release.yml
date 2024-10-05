@@ -25,21 +25,46 @@ jobs:
         run: |
           python -m pip install --upgrade pip  # Actualiza pip
           pip install setuptools wheel  # Instala dependencias necesarias para el empaquetado
+          # Instala dependencias adicionales desde requirements.txt si existe
+          if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
 
       - name: Build package
         run: |
           python setup.py sdist bdist_wheel  # Empaqueta el proyecto en formato distribuible
 
-      - name: List files in current directory
-        run: ls -R  # Lista recursivamente todos los archivos en el directorio actual
+      # Diagnóstico: Verificar el contenido del directorio actual
+      - name: List files in project directory
+        run: |
+          echo "Listando archivos en la raíz del proyecto..."
+          ls -R .
+
+      # Diagnóstico: Verificar el contenido de la carpeta src
+      - name: List files in src directory
+        run: |
+          echo "Listando archivos en la carpeta src/..."
+          ls -R src
+
+      # Verificar la existencia de la carpeta dist/ y listar su contenido
+      - name: List files in dist directory
+        run: |
+          echo "Verificando la existencia de la carpeta dist/..."
+          if [ -d "./dist" ]; then
+            echo "dist/ directory exists. Listando su contenido:"
+            ls -R dist
+          else
+            echo "La carpeta dist/ no existe o está vacía."
+          fi
+
+      # Intentar crear la carpeta dist/ si no existe y mostrar mensaje
       - name: Verify dist folder creation
         run: |
           if [ -d "./dist" ]; then
-            echo "dist/ directory exists."
+            echo "dist/ directory already exists."
           else
             echo "dist/ directory does not exist. Creating it now."
             mkdir dist
           fi
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
