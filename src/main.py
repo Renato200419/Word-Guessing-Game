@@ -1,4 +1,4 @@
-# print("Bienvenido al Juego de Adivinanza de Palabras!")
+
 # print("La configuración inicial del juego se ha completado.")
 
 # src/main.py
@@ -6,9 +6,9 @@ from word_selector import seleccionar_palabra
 from game_logic import adivinar_letra, dar_pista
 
 def main():
+    print("Bienvenido al Juego de Adivinanza de Palabras!")
     # Seleccionar la palabra secreta
     palabra = seleccionar_palabra()
-
     # Inicializar el progreso con guiones bajos y los intentos restantes
     progreso = ['_'] * len(palabra)
     intentos_restantes = 5  # Número máximo de intentos permitidos
