@@ -1,4 +1,3 @@
-
 # print("La configuración inicial del juego se ha completado.")
 
 # src/main.py
