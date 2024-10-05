@@ -1,0 +1,6 @@
+perro
+gato
+computadora
+programacion
+automovil
+manzana
