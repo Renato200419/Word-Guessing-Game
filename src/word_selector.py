@@ -16,6 +16,6 @@ def seleccionar_palabra():
     palabra_seleccionada = random.choice(palabras).strip()
 
     # Imprimir el mensaje solicitado
-    #print("La palabra ha sido seleccionada. ¡Comienza a adivinar!")
+    print("La palabra ha sido seleccionada. ¡Comienza a adivinar!")
     return palabra_seleccionada
 
