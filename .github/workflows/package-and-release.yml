@@ -1,0 +1,57 @@
+name: Package and Release
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # Extrae el código fuente del repositorio
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'  # Configura la versión de Python
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip  # Actualiza pip
+          pip install setuptools wheel  # Instala dependencias necesarias para el empaquetado
+
+      - name: Build package
+        run: |
+          python setup.py sdist bdist_wheel  # Empaqueta el proyecto en formato distribuible
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Token para autenticar la acción
+        with:
+          tag_name: v${{ github.run_number }}  # Crea un tag basado en el número de ejecución
+          release_name: "Word Guessing Game - Release ${{ github.run_number }}"  # Nombre de la versión
+          body: |
+            ## Cambios en esta versión
+            - Empaquetado del juego completo.
+            - Añadido sistema de pistas limitadas.
+            - Verificación de victoria y derrota con mensajes claros.
+          draft: false  # Publica el release inmediatamente
+          prerelease: false  # No es una versión preliminar
+
+      - name: Upload Release Assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Token para autenticar la acción
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}  # URL para subir los archivos
+          asset_path: ./dist/*  # Ruta de los archivos empaquetados
+          asset_name: "word-guessing-game-v${{ github.run_number }}.tar.gz"  # Nombre del archivo a subir
+          asset_content_type: application/gzip  # Tipo de contenido del archivo
