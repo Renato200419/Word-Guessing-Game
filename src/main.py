@@ -3,7 +3,7 @@
 
 # src/main.py
 from word_selector import seleccionar_palabra
-from game_logic import adivinar_letra
+from game_logic import adivinar_letra, dar_pista
 
 def main():
     # Seleccionar la palabra secreta
@@ -12,7 +12,7 @@ def main():
     # Inicializar el progreso con guiones bajos y los intentos restantes
     progreso = ['_'] * len(palabra)
     intentos_restantes = 5  # Número máximo de intentos permitidos
-
+    pistas_disponibles = 3  # Número máximo de pistas permitidas
 
     print(f"Palabra: {' '.join(progreso)}")
 
@@ -27,6 +27,13 @@ def main():
         # Mostrar el mensaje de retroalimentación
         print(mensaje)
         print(f"Palabra: {' '.join(progreso)}")
+
+        # Preguntar al jugador si necesita una pista si aún quedan pistas disponibles
+        if intentos_restantes > 0 and '_' in progreso and pistas_disponibles > 0:
+            usar_pista = input("¿Necesitas una pista? (s/n): ").lower()
+            if usar_pista == 's':
+                progreso, pistas_disponibles, mensaje_pista = dar_pista(palabra, progreso, pistas_disponibles)
+                print(mensaje_pista)
 
     # Verificar si el jugador ganó o perdió
     if '_' not in progreso:
