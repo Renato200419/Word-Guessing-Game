@@ -4,66 +4,40 @@ on:
   push:
     branches:
       - main
-      - feature/deploy-and-version-management
+      - feature/deploy-and-version-management  # Agregar la rama actual para despliegue
   pull_request:
     branches:
       - main
-      - feature/deploy-and-version-management
+      - feature/deploy-and-version-management  # Agregar la rama actual para PR
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Usar la última versión de Ubuntu para el entorno
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2  # Clonar el repositorio
 
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: '3.x'
+          python-version: '3.x'  # Especificar la versión de Python
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install -r requirements.txt  # Instalar dependencias desde requirements.txt
 
       - name: Install setuptools and wheel
         run: |
-          python -m pip install --upgrade pip
-          pip install setuptools wheel
+          python -m pip install --upgrade pip  # Actualizar pip a la última versión
+          pip install setuptools wheel  # Instalar setuptools y wheel
 
       - name: Create binary distribution
         run: |
-          python setup.py bdist_wheel
+          python setup.py bdist_wheel  # Crear la distribución binaria
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: word-guessing-game
-          path: dist/*.whl
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
-        with:
-          tag_name: v${{ github.run_number }}
-          release_name: "Word Guessing Game - Release ${{ github.run_number }}"
-          body: |
-            ## Cambios en esta versión
-            - Empaquetado del juego completo.
-            - Añadido sistema de pistas limitadas.
-            - Verificación de victoria y derrota con mensajes claros.
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Assets
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}  
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/*.whl
-          asset_name: "word-guessing-game-v${{ github.run_number }}.whl"
-          asset_content_type: application/zip
+          name: word-guessing-game  # Nombre del artefacto
+          path: dist/*.whl  # Ruta del archivo de distribución
