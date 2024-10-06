@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - main
-      - feature/deploy-and-version-management  # Agregar la rama actual
+      - feature/deploy-and-version-management
   pull_request:
     branches:
       - main
-      - feature/deploy-and-version-management  # Agregar la rama actual
+      - feature/deploy-and-version-management
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run:
+        run: |
           pip install -r requirements.txt
 
       - name: Install setuptools and wheel
@@ -41,3 +41,29 @@ jobs:
         with:
           name: word-guessing-game
           path: dist/*.whl
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: "Word Guessing Game - Release ${{ github.run_number }}"
+          body: |
+            ## Cambios en esta versión
+            - Empaquetado del juego completo.
+            - Añadido sistema de pistas limitadas.
+            - Verificación de victoria y derrota con mensajes claros.
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}  
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/*.whl
+          asset_name: "word-guessing-game-v${{ github.run_number }}.whl"
+          asset_content_type: application/zip
