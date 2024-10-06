@@ -1,0 +1,43 @@
+name: Package and Release
+
+on:
+  push:
+    branches:
+      - main
+      - feature/deploy-and-version-management  # Agregar la rama actual para despliegue
+  pull_request:
+    branches:
+      - main
+      - feature/deploy-and-version-management  # Agregar la rama actual para PR
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Usar la última versión de Ubuntu para el entorno
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # Clonar el repositorio
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x'  # Especificar la versión de Python
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt  # Instalar dependencias desde requirements.txt
+
+      - name: Install setuptools and wheel
+        run: |
+          python -m pip install --upgrade pip  # Actualizar pip a la última versión
+          pip install setuptools wheel  # Instalar setuptools y wheel
+
+      - name: Create binary distribution
+        run: |
+          python setup.py bdist_wheel  # Crear la distribución binaria
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: word-guessing-game  # Nombre del artefacto
+          path: dist/*.whl  # Ruta del archivo de distribución
